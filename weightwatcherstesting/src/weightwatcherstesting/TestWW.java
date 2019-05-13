@@ -1,7 +1,5 @@
 package weightwatcherstesting;
 
-
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -23,16 +21,17 @@ public class TestWW {
 	@BeforeTest
 	public void beforeTest() {
 		System.setProperty("webdriver.gecko.driver", "./geckodriver.exe");
-		driver=new FirefoxDriver();
+		driver = new FirefoxDriver();
 		driver.manage().window().maximize();
 	}
-	@AfterTest
-	 public void tearDown(){
-	     driver.close();
-	     driver.quit();
-	 }
 
-	@Test(priority=1)
+	@AfterTest
+	public void tearDown() {
+
+		driver.quit();
+	}
+
+	@Test(priority = 1)
 	public void ChkWWPage() throws InterruptedException {
 		driver.get("https://www.weightwatchers.com/us/");
 
@@ -41,7 +40,7 @@ public class TestWW {
 		Assert.assertEquals(actualTitle, expTitle);
 	}
 
-	@Test(priority=2)
+	@Test(priority = 2)
 	public void chkTitle() throws InterruptedException {
 		driver.findElement(By.id("ela-menu-visitor-desktop-supplementa_find-a-studio")).click();
 		SoftAssert softAssert = new SoftAssert();
@@ -57,16 +56,23 @@ public class TestWW {
 		Thread.sleep(3000);
 	}
 
-	@Test(priority=3)
-	public void chkloc() {
+	@Test(priority = 3)
+	public void chkloc() throws InterruptedException {
 		driver.findElement(By.id("meetingSearch")).click();
+		Thread.sleep(3000);
 		driver.findElement(By.id("meetingSearch")).sendKeys("10011");
 		driver.findElement(By.cssSelector(".spice-translated:nth-child(3)")).click();
-
-		System.out.println(driver.findElement(By.cssSelector("#ml-1180510 > result-location > div > div.meeting-location__top > a > location-address > div > div > div.location__top")).getText());
-        String actLocname=(driver.findElement(By.cssSelector("#ml-1180510 > result-location > div > div.meeting-location__top > a > location-address > div > div > div.location__top > div.location__name")).getText());
-		driver.findElement(By.cssSelector("#ml-1180510 > result-location > div > div.meeting-location__top > a > location-address > div > div > div.location__top")).click();
-		String getLocname=(driver.findElement(By.cssSelector(".location__name")).getText());
+		Thread.sleep(3000);
+		System.out.println(driver.findElement(By.cssSelector(
+				"#ml-1180510 > result-location > div > div.meeting-location__top > a > location-address > div > div > div.location__top"))
+				.getText());
+		String actLocname = (driver.findElement(By.cssSelector(
+				"#ml-1180510 > result-location > div > div.meeting-location__top > a > location-address > div > div > div.location__top > div.location__name"))
+				.getText());
+		driver.findElement(By.cssSelector(
+				"#ml-1180510 > result-location > div > div.meeting-location__top > a > location-address > div > div > div.location__top"))
+				.click();
+		String getLocname = (driver.findElement(By.cssSelector(".location__name")).getText());
 		SoftAssert softAssert = new SoftAssert();
 		try {
 			softAssert.assertEquals(actLocname, getLocname);
@@ -74,55 +80,51 @@ public class TestWW {
 			// TODO Auto-generated catch block
 			System.out.println("Test");
 		}
-		
+
 		softAssert.assertAll();
-		String day=LocalDate.now().getDayOfWeek().name().substring(0, 3);
-		List<WebElement> days=driver.findElements(By.xpath("//div[@class='hours-list-item-day']"));
-		for(int i=0;i<days.size();++i)
-		{
-			if(days.get(i).getText().toUpperCase().equals(day))
-			{
-				String xpath="//ul[@class='hours-list list-unstyled hours-list--count-7']/li[@class='hours-list-item']["+i+"]/div[1]/div[2]/div";
-				List<WebElement> times=driver.findElements(By.xpath(xpath));
-				for(WebElement t:times)
-				{
+		String day = LocalDate.now().getDayOfWeek().name().substring(0, 3);
+		List<WebElement> days = driver.findElements(By.xpath("//div[@class='hours-list-item-day']"));
+		for (int i = 0; i < days.size(); ++i) {
+			if (days.get(i).getText().toUpperCase().equals(day)) {
+				String xpath = "//ul[@class='hours-list list-unstyled hours-list--count-7']/li[@class='hours-list-item']["
+						+ i + "]/div[1]/div[2]/div";
+				List<WebElement> times = driver.findElements(By.xpath(xpath));
+				for (WebElement t : times) {
 					System.out.println(t.getText());
 				}
 			}
 		}
-		printMeetings("MON",driver);
-		}
-	public void printMeetings(String day,WebDriver driver)
-	{
-		HashMap<String, Integer> data=new HashMap<String,Integer>();
-		List<WebElement> days=driver.findElements(By.xpath("//div[@class='schedule-detailed-day']/div[1]"));
-		
-		for(int i=0;i<days.size();++i)
-		{
-			if(days.get(i).getText().toUpperCase().equals(day))
-			{
-				String xpath="//div[@class='schedule-detailed']/div[@class='schedule-detailed-day']["+(i+1)+"]/div[2]/div/div[2]";
-				List<WebElement> persons=driver.findElements(By.xpath(xpath));
-				for(WebElement e:persons)
-				{
-					if(data.isEmpty())
+		printMeetings("MON", driver);
+	}
+
+	public void printMeetings(String day, WebDriver driver) {
+		HashMap<String, Integer> data = new HashMap<String, Integer>();
+		List<WebElement> days = driver.findElements(By.xpath("//div[@class='schedule-detailed-day']/div[1]"));
+
+		for (int i = 0; i < days.size(); ++i) {
+			if (days.get(i).getText().toUpperCase().equals(day)) {
+				String xpath = "//div[@class='schedule-detailed']/div[@class='schedule-detailed-day'][" + (i + 1)
+						+ "]/div[2]/div/div[2]";
+				List<WebElement> persons = driver.findElements(By.xpath(xpath));
+				for (WebElement e : persons) {
+					if (data.isEmpty())
 						data.put(e.getText(), 1);
-					else
-					{
-						if(data.containsKey(e.getText()))
-							data.put(e.getText(), data.get(e.getText())+1);
+					else {
+						if (data.containsKey(e.getText()))
+							data.put(e.getText(), data.get(e.getText()) + 1);
 						else
 							data.put(e.getText(), 1);
 					}
 				}
 			}
 		}
-		for(@SuppressWarnings("unused") Map.Entry<String, Integer> m:data.entrySet())
+		for (@SuppressWarnings("unused")
+		Map.Entry<String, Integer> m : data.entrySet())
 
 		{
-			
+
 			System.out.println(m.getKey() + ":" + m.getValue());
 		}
-		
+
 	}
-	}
+}
